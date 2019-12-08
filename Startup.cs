@@ -13,22 +13,96 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //-------------------------------------------------------------------------
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
+
+
 using VueCliMiddleware;
 
 namespace mysegments
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IConfiguration configuration;
+        private readonly ILogger<Startup> logger;
+        private void CheckSameSite(HttpContext httpContext, CookieOptions options)
         {
-            Configuration = configuration;
+            if (options.SameSite == SameSiteMode.None)
+            {
+                var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+                // TODO: Use your User Agent library of choice here. 
+                if (options.SameSite == SameSiteMode.Lax/* UserAgent doesn’t support new behavior */)
+                {
+                    options.SameSite = SameSiteMode.Unspecified;
+                }
+            }
+        }
+        /// <summary>
+        /// This sets up the OIDC authentication for Hangfire.
+        /// </summary>
+        /// <param name="services">The passed in IServiceCollection.</param>
+        private void ConfigureAuthentication(IServiceCollection services)
+        {
+            services.AddAuthentication(auth =>
+            {
+                auth.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                auth.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                auth.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie(options =>
+            {
+                options.Cookie.Name = "com.mysegments";
+                //options.LoginPath = AuthorizationConstants.LoginPath;
+                //options.LogoutPath = AuthorizationConstants.LogoutPath;
+            })
+            .AddOpenIdConnect(options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.SaveTokens = false;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.Scope.Add("openid");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                };
+                this.Configuration.GetSection("OpenIdConnect").Bind(options);
+                options.Events = new OpenIdConnectEvents()
+                {
+                    OnRedirectToIdentityProvider = ctx =>
+                    {
+                        this.logger.LogDebug("Redirecting to identity provider");
+                        return Task.FromResult(0);
+                    },
+                };
+            });
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="env">The injected Environment provider.</param>
+        /// <param name="configuration">The injected configuration provider.</param>
+        /// <param name="logger">The injected logger provider.</param>
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        {
+            this.configuration = configuration;
+            this.logger = logger;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -36,6 +110,14 @@ namespace mysegments
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+                options.OnAppendCookie = cookieContext =>
+                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                options.OnDeleteCookie = cookieContext =>
+                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+            });
             services.AddControllersWithViews();
 
             // Add AddRazorPages if the app uses Razor Pages.
@@ -62,6 +144,9 @@ namespace mysegments
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
+
+            app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
+            app.UseAuthentication();
 
             app.Use(async (context, next) =>
             {
