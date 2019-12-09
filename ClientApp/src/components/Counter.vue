@@ -19,11 +19,11 @@ const namespace: string = "counter";
 
 @Component
 export default class Counter extends Vue {
-  @Getter("currentCount", { namespace })
+  @Getter('currentCount', { namespace })
   private currentCount!: number;
-  @Action("increment", { namespace })
+  @Action('increment', { namespace })
   private incrementCounter: any;
-  @Action("reset", { namespace })
+  @Action('reset', { namespace })
   private resetCounter: any;
 
   private increment() {
