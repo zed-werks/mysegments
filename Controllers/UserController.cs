@@ -45,7 +45,7 @@ namespace mysegments.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet]
+        [HttpGet("/User/Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(string returnUrl = "/")
         {

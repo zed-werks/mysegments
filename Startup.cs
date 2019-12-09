@@ -21,7 +21,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -81,7 +83,7 @@ namespace mysegments
                 {
                     ValidateIssuer = true,
                 };
-                this.Configuration.GetSection("OpenIdConnect").Bind(options);
+                this.configuration.GetSection("OpenIdConnect").Bind(options);
                 options.Events = new OpenIdConnectEvents()
                 {
                     OnRedirectToIdentityProvider = ctx =>
@@ -105,8 +107,6 @@ namespace mysegments
 
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -118,6 +118,10 @@ namespace mysegments
                 options.OnDeleteCookie = cookieContext =>
                     CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
+                        // Add framework services.
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             services.AddControllersWithViews();
 
             // Add AddRazorPages if the app uses Razor Pages.
@@ -148,6 +152,8 @@ namespace mysegments
             app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
             app.UseAuthentication();
 
+
+/*
             app.Use(async (context, next) =>
             {
                 if (!context.User.Identity.IsAuthenticated)
@@ -158,7 +164,7 @@ namespace mysegments
                 {
                     await next();
                 }
-            });
+            }); */
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
