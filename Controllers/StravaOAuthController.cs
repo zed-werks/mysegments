@@ -32,41 +32,47 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using mysegments.OAuth.Provider.Strava;
+
 namespace mysegments.Controllers
 {
-    public class UserController : Controller
+    public class StravaController : Controller
     {
-        private ILogger<UserController> logger;
+        private ILogger<StravaController> logger;
         private IConfiguration configuration;
 
-        public UserController(IConfiguration configuration, ILogger<UserController> logger)
+        public StravaController(IConfiguration configuration, ILogger<StravaController> logger)
         {
             this.logger = logger;
             this.configuration = configuration;
         }
 
-        [HttpGet("/User/Login")]
+        [HttpGet("/Strava/Connect")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = "/")
+        public async Task<IActionResult> Connect(string returnUrl = "/Strava/Connected")
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync();
 
-            if (!this.HttpContext.User.Identity.IsAuthenticated)
-            {
-                this.logger.LogDebug("Issuing OIDC Challenge");
-                return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme);
-            }
-
+            this.logger.LogDebug("Issuing Strava Connect Challenge");
             this.logger.LogDebug("Redirecting to {0}", returnUrl);
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+
+            var challenge = new ChallengeResult(StravaDefaults.AuthenticationScheme);
+            challenge.Properties.RedirectUri = returnUrl;
+            return challenge;
         }
 
         [HttpGet]
-        public IActionResult Logout()
+        public IActionResult Connected()
         {
-            return new SignOutResult(new[] { "oidc", "Cookies" });
-        }   
+            this.logger.LogInformation("/Strava/Connected");
+            return Redirect("/");
+        }
+
+        [HttpGet]
+        public IActionResult Disconnect()
+        {
+            return new SignOutResult(new[] { StravaDefaults.AuthenticationScheme, "Cookies" });
+        }
     }
 }

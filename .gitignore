@@ -237,3 +237,6 @@ _Pvt_Extensions
 **/appsettings.Staging.json
 **/appsettings.Production.json
 **/appsettings.local.json
+
+# MacOS FileSystem 
+**/.DS_Store

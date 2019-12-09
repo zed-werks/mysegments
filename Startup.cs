@@ -15,8 +15,8 @@
 //-------------------------------------------------------------------------
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +33,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
 
-
+using mysegments.OAuth.Provider.Strava;
 using VueCliMiddleware;
 
 namespace mysegments
@@ -63,7 +63,7 @@ namespace mysegments
             services.AddAuthentication(auth =>
             {
                 auth.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                auth.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = StravaDefaults.AuthenticationScheme;
                 auth.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 auth.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
@@ -73,23 +73,22 @@ namespace mysegments
                 options.LoginPath = "/User/Login";
                 options.LogoutPath = "/User/Logout";
             })
-            .AddOpenIdConnect(options =>
-            {
+            .AddStrava(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.ResponseType = OpenIdConnectResponseType.Code;
                 options.SaveTokens = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
-                options.Scope.Add("openid");
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.UserInformationEndpoint
+                
+                this.configuration.GetSection("StravaOAuth").Bind(options);
+                options.Events = new OAuthEvents()
                 {
-                    ValidateIssuer = this.configuration.GetValue<bool>("OpenIdConnect:ValidateIssuer", false)
-                };
-                this.configuration.GetSection("OpenIdConnect").Bind(options);
-                options.Events = new OpenIdConnectEvents()
-                {
-                    OnRedirectToIdentityProvider = ctx =>
+                    OnRedirectToAuthorizationEndpoint = ctx =>
                     {
-                        this.logger.LogDebug("Redirecting to identity provider");
+                        this.logger.LogDebug("Redirecting to strava authorization endpoint");
+                        return Task.FromResult(0);
+                    },
+                    OnTicketReceived = ctx =>
+                    {
+                        this.logger.LogDebug("Received Ticket");
                         return Task.FromResult(0);
                     },
                 };
