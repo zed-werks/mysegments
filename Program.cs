@@ -15,12 +15,16 @@
 //-------------------------------------------------------------------------
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace mysegments
 {
     public class Program
     {
+        private const string EnvironmentPrefix = "mysegments_";
+
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
@@ -28,6 +32,16 @@ namespace mysegments
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .ConfigureAppConfiguration((builderContext, config) =>
+                {
+                    config.AddEnvironmentVariables(prefix: EnvironmentPrefix);
+                    config.AddJsonFile("appsettings.local.json", true, true); // Loads local settings
+                })
+                .UseStartup<Startup>()
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                });
     }
 }
