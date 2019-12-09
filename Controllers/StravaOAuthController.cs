@@ -49,10 +49,10 @@ namespace mysegments.Controllers
 
         [HttpGet("/Strava/Connect")]
         [AllowAnonymous]
-        public async Task<IActionResult> Connect(string returnUrl = "/Strava/Connected")
+        public IActionResult Connect(string returnUrl = "/Strava/Connected")
         {
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync();
+            //await HttpContext.SignOutAsync();
 
             this.logger.LogDebug("Issuing Strava Connect Challenge");
             this.logger.LogDebug("Redirecting to {0}", returnUrl);
@@ -60,8 +60,8 @@ namespace mysegments.Controllers
             var props = new AuthenticationProperties()
             {
                 RedirectUri = Url.Action(returnUrl),
-                Items = 
-                { 
+                Items =
+                {
                     { "returnUrl", returnUrl },
                     { "scheme", StravaDefaults.AuthenticationScheme },
                 }

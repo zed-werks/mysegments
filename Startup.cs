@@ -42,18 +42,7 @@ namespace mysegments
     {
         private readonly IConfiguration configuration;
         private readonly ILogger<Startup> logger;
-        private void CheckSameSite(HttpContext httpContext, CookieOptions options)
-        {
-            if (options.SameSite == SameSiteMode.None)
-            {
-                var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
-                // TODO: Use your User Agent library of choice here. 
-                if (options.SameSite == SameSiteMode.Lax/* UserAgent doesn’t support new behavior */)
-                {
-                    options.SameSite = SameSiteMode.Unspecified;
-                }
-            }
-        }
+ 
         /// <summary>
         /// This sets up the OIDC authentication for Hangfire.
         /// </summary>
@@ -73,11 +62,12 @@ namespace mysegments
                 options.LoginPath = "/Strava/Connect";
                 options.LogoutPath = "/Strava/Disconnect";
             })
-            .AddStrava(options => {
+            .AddStrava(options =>
+            {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.SaveTokens = true;                
+                //options.SaveTokens = true;
                 this.configuration.GetSection("StravaOAuth").Bind(options);
-                options.Events = new OAuthEvents()
+                /*options.Events = new OAuthEvents()
                 {
                     OnRedirectToAuthorizationEndpoint = ctx =>
                     {
@@ -89,7 +79,7 @@ namespace mysegments
                         this.logger.LogDebug("Received Ticket");
                         return Task.FromResult(0);
                     },
-                };
+                }; */
             });
         }
         /// <summary>
@@ -112,15 +102,18 @@ namespace mysegments
 
             this.logger.LogDebug("Configure Http Services...");
 
-            services.AddHttpClient();
-            services.AddResponseCompression(options =>
+            //services.AddHttpClient();
+    /*         services.AddResponseCompression(options =>
             {
                 //options.Providers.Add<GzipCompressionProvider>();
                 options.EnableForHttps = true;
-            });
+            }); */
+            
+            this.ConfigureAuthentication(services);
 
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddHealthChecks();
+
+            //services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddHealthChecks();
 
             services
                 .AddMvc()
@@ -128,7 +121,6 @@ namespace mysegments
 
             services.AddControllersWithViews();
 
-            this.ConfigureAuthentication(services);
 
             // Add AddRazorPages if the app uses Razor Pages.
             services.AddRazorPages();
@@ -155,15 +147,18 @@ namespace mysegments
                 app.UseHttpsRedirection();
             }
 
-            app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
+            //app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
             app.UseAuthentication();
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseResponseCompression();
+
+            if (!env.IsDevelopment())
+            {
+                app.UseResponseCompression();
+            }
 
             app.UseRouting();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

@@ -20,7 +20,8 @@ namespace mysegments.OAuth.Provider.Strava
             TokenEndpoint = StravaDefaults.TokenEndpoint;
             UserInformationEndpoint = StravaDefaults.UserInformationEndpoint;
 
-            Scope.Add("public");
+            Scope.Add("read");
+            Scope.Add("activity:read");
 
             ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
             ClaimActions.MapJsonKey(ClaimTypes.Name, "username");
