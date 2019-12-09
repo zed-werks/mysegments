@@ -28,6 +28,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
@@ -69,19 +70,19 @@ namespace mysegments
             .AddCookie(options =>
             {
                 options.Cookie.Name = "com.mysegments";
-                //options.LoginPath = AuthorizationConstants.LoginPath;
-                //options.LogoutPath = AuthorizationConstants.LogoutPath;
+                options.LoginPath = "/User/Login";
+                options.LogoutPath = "/User/Logout";
             })
             .AddOpenIdConnect(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.ResponseType = OpenIdConnectResponseType.Code;
-                options.SaveTokens = false;
+                options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.Scope.Add("openid");
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
+                    ValidateIssuer = this.configuration.GetValue<bool>("OpenIdConnect:ValidateIssuer", false)
                 };
                 this.configuration.GetSection("OpenIdConnect").Bind(options);
                 options.Events = new OpenIdConnectEvents()
@@ -110,19 +111,27 @@ namespace mysegments
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
+            IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
+
+            this.logger.LogDebug("Configure Http Services...");
+
+            services.AddHttpClient();
+            services.AddResponseCompression(options =>
             {
-                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
-                options.OnAppendCookie = cookieContext =>
-                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
-                options.OnDeleteCookie = cookieContext =>
-                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                //options.Providers.Add<GzipCompressionProvider>();
+                options.EnableForHttps = true;
             });
-                        // Add framework services.
-            services.AddMvc()
+
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHealthChecks();
+
+            services
+                .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddControllersWithViews();
+
+            this.ConfigureAuthentication(services);
 
             // Add AddRazorPages if the app uses Razor Pages.
             services.AddRazorPages();
@@ -152,24 +161,11 @@ namespace mysegments
             app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
             app.UseAuthentication();
 
-
-/*
-            app.Use(async (context, next) =>
-            {
-                if (!context.User.Identity.IsAuthenticated)
-                {
-                    await context.ChallengeAsync();
-                }
-                else
-                {
-                    await next();
-                }
-            }); */
-
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
