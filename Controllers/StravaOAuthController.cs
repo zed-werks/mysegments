@@ -57,9 +57,16 @@ namespace mysegments.Controllers
             this.logger.LogDebug("Issuing Strava Connect Challenge");
             this.logger.LogDebug("Redirecting to {0}", returnUrl);
 
-            var challenge = new ChallengeResult(StravaDefaults.AuthenticationScheme);
-            challenge.Properties.RedirectUri = returnUrl;
-            return challenge;
+            var props = new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action(returnUrl),
+                Items = 
+                { 
+                    { "returnUrl", returnUrl },
+                    { "scheme", StravaDefaults.AuthenticationScheme },
+                }
+            };
+            return new ChallengeResult(StravaDefaults.AuthenticationScheme, props);
         }
 
         [HttpGet]

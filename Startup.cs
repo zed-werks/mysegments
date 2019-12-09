@@ -70,14 +70,12 @@ namespace mysegments
             .AddCookie(options =>
             {
                 options.Cookie.Name = "com.mysegments";
-                options.LoginPath = "/User/Login";
-                options.LogoutPath = "/User/Logout";
+                options.LoginPath = "/Strava/Connect";
+                options.LogoutPath = "/Strava/Disconnect";
             })
             .AddStrava(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.SaveTokens = true;
-                options.UserInformationEndpoint
-                
+                options.SaveTokens = true;                
                 this.configuration.GetSection("StravaOAuth").Bind(options);
                 options.Events = new OAuthEvents()
                 {
@@ -162,6 +160,7 @@ namespace mysegments
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseResponseCompression();
 
             app.UseRouting();
             app.UseAuthorization();
