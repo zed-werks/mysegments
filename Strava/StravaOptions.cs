@@ -1,26 +1,25 @@
 ﻿
 
-namespace AspNetCore.OAuth.Provider.Strava
+namespace AspNetCore.Authentication.Strava
 {
-    using System.ComponentModel;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.OAuth;
     using Microsoft.AspNetCore.Http;
     using System.Security.Claims;
-    public class StravaAuthOptions : OAuthOptions
+    public class StravaOptions : OAuthOptions
     {
         /// <summary>
-        /// Configuration options for <see cref="StravaAuthHandler"/>.
+        /// Configuration options for <see cref="StravaHandler"/>.
         /// </summary>
-        public StravaAuthOptions()
+        public StravaOptions()
         {
-            ClaimsIssuer = StravaAuthDefaults.Issuer;
+            ClaimsIssuer = StravaDefaults.Issuer;
 
-            CallbackPath = new PathString(StravaAuthDefaults.CallbackPath); // used by OWIN, not MVC
+            CallbackPath = new PathString(StravaDefaults.CallbackPath); // used by OWIN, not MVC
 
-            AuthorizationEndpoint = StravaAuthDefaults.AuthorizationEndpoint;
-            TokenEndpoint = StravaAuthDefaults.TokenEndpoint;
-            UserInformationEndpoint = StravaAuthDefaults.UserInformationEndpoint;
+            AuthorizationEndpoint = StravaDefaults.AuthorizationEndpoint;
+            TokenEndpoint = StravaDefaults.TokenEndpoint;
+            UserInformationEndpoint = StravaDefaults.UserInformationEndpoint;
 
             Scope.Add("read");
             Scope.Add("activity:read_all");

@@ -27,7 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.Extensions.Logging;
-using AspNetCore.OAuth.Provider.Strava;
+using AspNetCore.Authentication.Strava;
 using VueCliMiddleware;
 
 namespace mysegments
@@ -60,9 +60,9 @@ namespace mysegments
         {
             services.AddAuthentication(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = StravaAuthDefaults.AuthenticationScheme;
+                //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = StravaDefaults.AuthenticationScheme;
             })
             .AddCookie(options =>
             {
@@ -72,8 +72,8 @@ namespace mysegments
             })
             .AddStrava(options =>
             {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.SaveTokens = false;
+                //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.SaveTokens = false;
                 this.configuration.GetSection("StravaOAuth").Bind(options);
                 options.Validate();
             });
@@ -118,7 +118,7 @@ namespace mysegments
             services.AddControllersWithViews();
 
             // Add AddRazorPages if the app uses Razor Pages.
-            services.AddRazorPages();
+            //services.AddRazorPages();
 
             // In production, the Vue files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

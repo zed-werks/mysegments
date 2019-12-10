@@ -1,24 +1,23 @@
 ﻿
-namespace AspNetCore.OAuth.Provider.Strava
+namespace AspNetCore.Authentication.Strava
 {
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.OAuth;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Newtonsoft.Json.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Security.Claims;
     using System.Text.Encodings.Web;
     using System.Text.Json;
     using System.Threading.Tasks;
-    public class StravaAuthHandler : OAuthHandler<StravaAuthOptions>
+    public class StravaHandler : OAuthHandler<StravaOptions>
     {
         /// <summary>
         /// Authentication handler for Strava authentication
         /// </summary>
-        public StravaAuthHandler(
-            IOptionsMonitor<StravaAuthOptions> options,
+        public StravaHandler(
+            IOptionsMonitor<StravaOptions> options,
             ILoggerFactory factory,
             UrlEncoder encoder,
             ISystemClock clock) : base(options, factory, encoder, clock) { }
@@ -26,7 +25,15 @@ namespace AspNetCore.OAuth.Provider.Strava
         protected override async Task<OAuthTokenResponse> ExchangeCodeAsync(OAuthCodeExchangeContext context)
         {
             Logger.LogDebug("DEBUG: ExchangeCodeAsync context.Code={code}", context.Code);
+        
             return await base.ExchangeCodeAsync(context);
+        }
+
+        protected override Task<HandleRequestResult> HandleRemoteAuthenticateAsync()
+        {
+            Logger.LogDebug("DEBUG: HandleRemoteAuthenticateAsync ");
+
+            return base.HandleRemoteAuthenticateAsync();
         }
 
         protected override async Task<AuthenticationTicket> CreateTicketAsync(

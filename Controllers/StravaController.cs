@@ -24,13 +24,14 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+using AspNetCore.Authentication.Strava;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-
-using AspNetCore.OAuth.Provider.Strava;
 
 namespace mysegments.Controllers
 {
@@ -70,7 +71,7 @@ namespace mysegments.Controllers
         [HttpGet]
         public IActionResult Disconnect()
         {
-            return new SignOutResult(new[] { StravaAuthDefaults.AuthenticationScheme, "Cookies" });
+            return new SignOutResult(new[] { StravaDefaults.AuthenticationScheme, "Cookies" });
         }
     }
 }

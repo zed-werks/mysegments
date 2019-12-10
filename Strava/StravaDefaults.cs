@@ -1,9 +1,9 @@
-﻿namespace AspNetCore.OAuth.Provider.Strava
+﻿namespace AspNetCore.Authentication.Strava
 {
     /// <summary>
     /// Default values used by the Strava authentication middleware.
     /// </summary>
-    public static class StravaAuthDefaults
+    public static class StravaDefaults
     {
         public const string AuthenticationScheme = "Strava";
         public const string DisplayName = "Strava";
