@@ -25,10 +25,6 @@ namespace AspNetCore.OAuth.Provider.Strava
             Scope.Add("read");
             Scope.Add("activity:read_all");
             Scope.Add("profile:read_all");
-            
-            this.UsePkce = true;
-
-            this.ClaimsIssuer = StravaAuthDefaults.Issuer;
 
             ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
             ClaimActions.MapJsonKey(ClaimTypes.Name, "username");
