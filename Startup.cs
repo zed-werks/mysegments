@@ -14,12 +14,10 @@
 // limitations under the License.
 //-------------------------------------------------------------------------
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices;
@@ -27,13 +25,9 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Http.Logging;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
-
-using mysegments.OAuth.Provider.Strava;
+using AspNetCore.OAuth.Provider.Strava;
 using VueCliMiddleware;
 
 namespace mysegments
@@ -42,46 +36,9 @@ namespace mysegments
     {
         private readonly IConfiguration configuration;
         private readonly ILogger<Startup> logger;
- 
-        /// <summary>
-        /// This sets up the OIDC authentication for Hangfire.
-        /// </summary>
-        /// <param name="services">The passed in IServiceCollection.</param>
-        private void ConfigureAuthentication(IServiceCollection services)
-        {
-            services.AddAuthentication(auth =>
-            {
-                auth.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                auth.DefaultChallengeScheme = StravaDefaults.AuthenticationScheme;
-                auth.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                auth.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(options =>
-            {
-                options.Cookie.Name = "com.mysegments";
-                options.LoginPath = "/Strava/Connect";
-                options.LogoutPath = "/Strava/Disconnect";
-            })
-            .AddStrava(options =>
-            {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //options.SaveTokens = true;
-                this.configuration.GetSection("StravaOAuth").Bind(options);
-                /*options.Events = new OAuthEvents()
-                {
-                    OnRedirectToAuthorizationEndpoint = ctx =>
-                    {
-                        this.logger.LogDebug("Redirecting to strava authorization endpoint");
-                        return Task.FromResult(0);
-                    },
-                    OnTicketReceived = ctx =>
-                    {
-                        this.logger.LogDebug("Received Ticket");
-                        return Task.FromResult(0);
-                    },
-                }; */
-            });
-        }
+
+        readonly static string CorsPolicy = "CorsPolicy";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -94,33 +51,71 @@ namespace mysegments
             this.logger = logger;
 
         }
+        
+        /// <summary>
+        /// This sets up the OIDC authentication for Hangfire.
+        /// </summary>
+        /// <param name="services">The passed in IServiceCollection.</param>
+        private void ConfigureAuthentication(IServiceCollection services)
+        {
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = StravaAuthDefaults.AuthenticationScheme;
+            })
+            .AddCookie(options =>
+            {
+                options.Cookie.Name = "com.mysegments";
+                options.LoginPath = "/Strava/Connect";
+                options.LogoutPath = "/Strava/Disconnect";
+            })
+            .AddStrava(options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.SaveTokens = false;
+                this.configuration.GetSection("StravaOAuth").Bind(options);
+                options.Validate();
+            });
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
 
-            this.logger.LogDebug("Configure Http Services...");
+            this.logger.LogDebug("Configure Services...");
 
-            //services.AddHttpClient();
-    /*         services.AddResponseCompression(options =>
+            services.AddCors(o => o.AddPolicy(CorsPolicy, builder =>
             {
-                //options.Providers.Add<GzipCompressionProvider>();
-                options.EnableForHttps = true;
-            }); */
-            
+                string origins = this.configuration.GetValue<string>("AddCors:WithOrigins");
+                this.logger.LogDebug("Configure Cors for origins: {0}.", origins);
+                System.Console.WriteLine("Configure Cors for origins: {0}.", origins);
+
+                builder.WithOrigins("http://localhost:5000", "https://www.strava.com")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .Build();
+            }));
+
+            services.AddHttpClient();
+            /*         services.AddResponseCompression(options =>
+                    {
+                        //options.Providers.Add<GzipCompressionProvider>();
+                        options.EnableForHttps = true;
+                    }); */
+
             this.ConfigureAuthentication(services);
 
-
-            //services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddHealthChecks();
+            services.AddHttpContextAccessor();
+            services.AddHealthChecks();
 
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddControllersWithViews();
-
 
             // Add AddRazorPages if the app uses Razor Pages.
             services.AddRazorPages();
@@ -137,6 +132,7 @@ namespace mysegments
         {
             if (env.IsDevelopment())
             {
+                this.logger.LogInformation("ENVIRONENT is Development");
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -144,40 +140,52 @@ namespace mysegments
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-                app.UseHttpsRedirection();
             }
 
-            //app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
-            app.UseAuthentication();
-
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseCookiePolicy(); // Before UseAuthentication or anything else that writes cookies. 
+
+            app.UseRouting();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.All
+            });
+
+            // app.UseRequestLocalization();
+            // app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
+            //app.UseStravaAuthentication();
+            //app.UseAuthorization();
+            //app.UseSession();
 
             if (!env.IsDevelopment())
             {
                 app.UseResponseCompression();
             }
 
-            app.UseRouting();
-
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-
-                if (env.IsDevelopment())
                 {
-                    endpoints.MapToVueCliProxy(
-                        "{*path}",
-                        new SpaOptions { SourcePath = "ClientApp" },
-                        npmScript: "serve",
-                        regex: "Compiled successfully");
-                }
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller}/{action=Index}/{id?}");
 
-                // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
-                endpoints.MapRazorPages();
-            });
+                    if (env.IsDevelopment())
+                    {
+                        endpoints.MapToVueCliProxy(
+                            "{*path}",
+                            new SpaOptions { SourcePath = "ClientApp" },
+                            npmScript: "serve",
+                            regex: "Compiled successfully");
+                    }
+
+                    // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
+                    endpoints.MapRazorPages();
+                }
+            );
 
             app.UseSpa(spa =>
             {

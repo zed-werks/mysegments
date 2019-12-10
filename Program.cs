@@ -41,6 +41,9 @@ namespace mysegments
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
+
+                    logging.AddFilter("Microsoft", LogLevel.Warning);
+                    logging.AddFilter("System", LogLevel.Warning);
                     logging.AddConsole();
                 });
     }

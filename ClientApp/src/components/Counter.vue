@@ -7,7 +7,7 @@
     <v-btn class="ma-2" color="info" @click.prevent="increment">Increment</v-btn>
     <v-btn class="ma-2" color="info" @click.prevent="reset">Reset</v-btn>
     <p>
-      <a href="/Strava/Connect?returnUrl=/">Connect with Strava</a>
+      <a href="/Strava/Connect">Connect with Strava</a>
     </p>
   </div>
 </template>

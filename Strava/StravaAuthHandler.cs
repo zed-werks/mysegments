@@ -1,31 +1,37 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-namespace mysegments.OAuth.Provider.Strava
+﻿
+namespace AspNetCore.OAuth.Provider.Strava
 {
-    public class StravaHandler : OAuthHandler<StravaOptions>
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.OAuth;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using Newtonsoft.Json.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Security.Claims;
+    using System.Text.Encodings.Web;
+    using System.Text.Json;
+    using System.Threading.Tasks;
+    public class StravaAuthHandler : OAuthHandler<StravaAuthOptions>
     {
         /// <summary>
         /// Authentication handler for Strava authentication
         /// </summary>
-        public StravaHandler(
-            IOptionsMonitor<StravaOptions> options,
+        public StravaAuthHandler(
+            IOptionsMonitor<StravaAuthOptions> options,
             ILoggerFactory factory,
             UrlEncoder encoder,
-            ISystemClock clock) : base(options, factory, encoder, clock) {}
+            ISystemClock clock) : base(options, factory, encoder, clock) { }
+
+        protected override async Task<OAuthTokenResponse> ExchangeCodeAsync(OAuthCodeExchangeContext context)
+        {
+            Logger.LogDebug("DEBUG: ExchangeCodeAsync context.Code={code}", context.Code);
+            return await base.ExchangeCodeAsync(context);
+        }
 
         protected override async Task<AuthenticationTicket> CreateTicketAsync(
-            ClaimsIdentity identity, 
-            AuthenticationProperties properties, 
+            ClaimsIdentity identity,
+            AuthenticationProperties properties,
             OAuthTokenResponse tokens)
         {
             // Get the Strava user

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 
 //-------------------------------------------------------------------------
 // Copyright © 2019 Zed Werks Inc.
@@ -26,13 +27,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
-using mysegments.OAuth.Provider.Strava;
+using AspNetCore.OAuth.Provider.Strava;
 
 namespace mysegments.Controllers
 {
@@ -49,39 +47,30 @@ namespace mysegments.Controllers
 
         [HttpGet("/Strava/Connect")]
         [AllowAnonymous]
-        public IActionResult Connect(string returnUrl = "/Strava/Connected")
+        public IActionResult Connect()
         {
             // Clear the existing external cookie to ensure a clean login process
             //await HttpContext.SignOutAsync();
 
             this.logger.LogDebug("Issuing Strava Connect Challenge");
-            this.logger.LogDebug("Redirecting to {0}", returnUrl);
 
-  /*           var props = new AuthenticationProperties()
-            {
-                RedirectUri = Url.Action(returnUrl),
-                Items =
-                {
-                    { "returnUrl", returnUrl },
-                    { "scheme", StravaDefaults.AuthenticationScheme },
-                }
-            };
-            return new ChallengeResult(StravaDefaults.AuthenticationScheme, props); */
-            return new ChallengeResult(StravaDefaults.AuthenticationScheme);
+            return Challenge(new AuthenticationProperties { RedirectUri = "Strava/Connected" }, "Strava");
+
+            //return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme, props); 
+           // return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme);
 
         }
 
-        [HttpGet]
+        [HttpGet("/Strava/Connected")]
         public IActionResult Connected()
         {
-            this.logger.LogInformation("/Strava/Connected");
             return Redirect("/");
         }
 
         [HttpGet]
         public IActionResult Disconnect()
         {
-            return new SignOutResult(new[] { StravaDefaults.AuthenticationScheme, "Cookies" });
+            return new SignOutResult(new[] { StravaAuthDefaults.AuthenticationScheme, "Cookies" });
         }
     }
 }
