@@ -60,8 +60,8 @@ namespace mysegments
         {
             services.AddAuthentication(options =>
             {
-                //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = StravaDefaults.AuthenticationScheme;
             })
             .AddCookie(options =>
@@ -72,8 +72,8 @@ namespace mysegments
             })
             .AddStrava(options =>
             {
-                //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //options.SaveTokens = false;
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.SaveTokens = true;
                 this.configuration.GetSection("StravaOAuth").Bind(options);
                 options.Validate();
             });
@@ -92,7 +92,7 @@ namespace mysegments
                 this.logger.LogDebug("Configure Cors for origins: {0}.", origins);
                 System.Console.WriteLine("Configure Cors for origins: {0}.", origins);
 
-                builder.WithOrigins("http://localhost:5000", "https://www.strava.com")
+                builder.WithOrigins(origins)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()

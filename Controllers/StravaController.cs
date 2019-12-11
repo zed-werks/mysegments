@@ -65,7 +65,10 @@ namespace mysegments.Controllers
         [HttpGet("/Strava/Connected")]
         public IActionResult Connected()
         {
-            return Redirect("/");
+            string name  = this.HttpContext.User.Identity.Name;
+
+            return Content($"Welcome {0}! you have successfully authorized MySegments", name);
+            //return Redirect("/");
         }
 
         [HttpGet]
