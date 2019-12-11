@@ -1,11 +1,17 @@
-﻿
+﻿using System.Security.AccessControl;
+
 
 namespace AspNetCore.Authentication.Strava
 {
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text.Json;
+    using System.Security.Claims;
+
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.OAuth;
     using Microsoft.AspNetCore.Http;
-    using System.Security.Claims;
+
     public class StravaOptions : OAuthOptions
     {
         /// <summary>
@@ -39,6 +45,21 @@ namespace AspNetCore.Authentication.Strava
             ClaimActions.MapJsonKey("urn:strava:created-at", "created_at");
             ClaimActions.MapJsonKey("urn:strava:updated-at", "updated_at");
             ClaimActions.MapJsonKey("urn:strava:premium", "premium");
+
+            this.Events = new OAuthEvents
+            {
+                OnCreatingTicket = async context =>
+                {
+                    // Get user info from the userinfo endpoint and use it to populate user claims
+                    var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                    var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+                    response.EnsureSuccessStatusCode();
+                    JsonElement user = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync());
+                    context.RunClaimActions(user);
+                }
+            };
         }
     }
 }
