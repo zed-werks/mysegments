@@ -58,23 +58,22 @@ namespace mysegments.Controllers
             return Challenge(new AuthenticationProperties { RedirectUri = "Strava/Connected" }, "Strava");
 
             //return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme, props); 
-           // return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme);
+            // return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme);
 
         }
 
         [HttpGet("/Strava/Connected")]
         public IActionResult Connected()
         {
-            string name  = this.HttpContext.User.Identity.Name;
-
-            return Content($"Welcome {0}! you have successfully authorized MySegments", name);
+            string textmsg = "Hello " + this.HttpContext.User.Identity.Name;
+            return Ok(Json(textmsg));
             //return Redirect("/");
         }
 
         [HttpGet]
         public IActionResult Disconnect()
         {
-            return new SignOutResult(new[] { StravaDefaults.AuthenticationScheme, "Cookies" });
+            return new SignOutResult(new[] { "Cookies" });
         }
     }
 }

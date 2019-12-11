@@ -31,7 +31,7 @@
     </v-content>
 
     <v-footer app>
-      <span>&nbsp;Software Ateliers&nbsp;&copy;&nbsp;2019</span>
+      <span>&nbsp;Zed Werks Inc.&nbsp;&copy;&nbsp;2019</span>
     </v-footer>
 
   </v-app>
