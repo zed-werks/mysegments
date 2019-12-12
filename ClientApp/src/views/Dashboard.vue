@@ -3,9 +3,8 @@
     <v-slide-y-transition mode="out-in">
       <v-row>
         <v-col>
-          <h1>Counter</h1>
-          <p>This is a simple example of a Vue.js component integrated with Vuex</p>
-          <Counter/>
+          <h1>Dashboard</h1>
+          <p>The dashboard</p>
         </v-col> 
       </v-row>
     </v-slide-y-transition>
@@ -14,10 +13,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Dashboard from '@/components/Dashboard.vue';
 
 @Component({
-  components: { Dashboard },
+  components: { },
 })
 export default class DashboardView extends Vue {}
 </script>
