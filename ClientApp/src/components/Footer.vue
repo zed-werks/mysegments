@@ -1,7 +1,8 @@
 <template>
   <v-footer app>
-    <span>&nbsp;Zed Werks Inc.&nbsp;&copy;&nbsp;2019</span>
-    <TopToolbar />
+    <span>&nbsp;<v-img src="@/assets/zedwerks.jpg" contain height="30px"/>
+    &nbsp;Zed Werks Inc.&nbsp;&copy;&nbsp;2019</span>
+    <v-img src="@/assets/strava/powerstrava.png" contain height="30px" />
   </v-footer>
 </template>
 
