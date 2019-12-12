@@ -1,4 +1,4 @@
-﻿# mysegements.com
+﻿# mysegements
 ## About
 This project leverages the Strava APIs to provide a user with a convenient way to see their own top ten results for each segment. The default sort will be by ranking and then drill down to segmenets that you hold that top ten ranking. 
 
