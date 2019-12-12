@@ -14,17 +14,12 @@ export default new Router({
       component: Home,
     },
     {
-      path: '/counter',
-      name: 'counter',
+      path: '/dashboard',
+      name: 'dashboard',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "counter" */ './views/Counter.vue'),
-    },
-    {
-      path: '/fetch-data',
-      name: 'fetch-data',
-      component: () => import(/* webpackChunkName: "fetch-data" */ './views/FetchData.vue'),
+      component: () => import(/* webpackChunkName: "dashboard" */ './views/Dashboard.vue'),
     },
   ],
 });

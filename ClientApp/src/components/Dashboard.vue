@@ -18,7 +18,7 @@ import { Component, Vue } from "vue-property-decorator";
 const namespace: string = "counter";
 
 @Component
-export default class Counter extends Vue {
+export default class Dashboard extends Vue {
   @Getter('currentCount', { namespace })
   private currentCount!: number;
   @Action('increment', { namespace })

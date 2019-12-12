@@ -14,12 +14,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Counter from '@/components/Counter.vue';
+import Dashboard from '@/components/Dashboard.vue';
 
 @Component({
-  components: { Counter },
+  components: { Dashboard },
 })
-export default class CounterView extends Vue {}
+export default class DashboardView extends Vue {}
 </script>
 
 
