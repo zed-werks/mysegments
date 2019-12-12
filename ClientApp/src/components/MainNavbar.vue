@@ -29,6 +29,9 @@
       <v-icon class="mx-4" v-html="icon"></v-icon>
       <v-toolbar-title class="mr-12 align-center" v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
+        <v-avatar v-if="username" size="36px">
+          <img src="https://graph.facebook.com/689357002/picture" v-bind:alt="username"  />
+        </v-avatar>
     </v-app-bar>
   </div>
 </template>
@@ -42,6 +45,7 @@ export default class MainNavbar extends Vue {
   @Prop({ default: 'MySegments' }) public title!: string;
   @Prop({ default: 'fas fa-trophy' }) public icon!: string;
 
+  private username: string = 'Brad';
   private clipped: boolean = true;
   private drawer: boolean = false;
   private miniVariant: boolean = false;
@@ -51,3 +55,6 @@ export default class MainNavbar extends Vue {
   ];
 }
 </script>
+
+
+
