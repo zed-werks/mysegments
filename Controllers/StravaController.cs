@@ -66,8 +66,8 @@ namespace mysegments.Controllers
         public IActionResult Connected()
         {
             string textmsg = "Hello " + this.HttpContext.User.Identity.Name;
-            return Ok(Json(textmsg));
-            //return Redirect("/");
+            //return Ok(Json(textmsg));
+            return Redirect("/dashboard");
         }
 
         [HttpGet]
