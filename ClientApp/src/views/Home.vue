@@ -5,9 +5,7 @@
         <v-card light max-width="500">
           <v-card-title class="headline" align="top">How Many top-ten trophies do you have?</v-card-title>
           <v-card-text>Just tap the button below and you'll see how many top ten placings you currently hold on segments you've ridden.</v-card-text>
-          <a href="/Strava/Connect">
-            <v-btn large height="96px" depressed />
-          </a>
+            <v-btn to="/Strava/Connect" large height="96px" depressed />
         </v-card>
       </v-layout>
     </v-container>

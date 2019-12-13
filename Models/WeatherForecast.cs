@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace mysegments.Models
 {
-    public class WeatherForecast
+    public class AthleteProfile
     {
         public DateTime Date { get; set; }
 
