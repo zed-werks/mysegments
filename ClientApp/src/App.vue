@@ -9,14 +9,13 @@
 </template>
 
 <script lang="ts">
-import Landing from '@/components/Landing.vue';
 import MainNavbar from '@/components/MainNavbar.vue';
 import Footer from '@/components/Footer.vue';
 
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component({
-  components: { Landing, MainNavbar, Footer },
+  components: { MainNavbar, Footer },
 })
 export default class App extends Vue {
 

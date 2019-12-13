@@ -14,6 +14,12 @@ export default new Router({
       component: Home,
     },
     {
+      path: '/home',
+      name: 'home',
+      component: Home,
+
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       // route level code-splitting
@@ -21,5 +27,6 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "dashboard" */ './views/Dashboard.vue'),
     },
+
   ],
 });

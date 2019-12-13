@@ -21,7 +21,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app :clipped-left="clipped" color="#d65050" dark>
+    <v-app-bar app :clipped-left="clipped" color="#fc4c02" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-btn class="d-none d-lg-flex" icon @click.stop="miniVariant = !miniVariant">
         <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
