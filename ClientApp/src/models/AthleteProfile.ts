@@ -1,14 +1,29 @@
-export class AthleteProfile {
-  constructor(
-    public updated: Date,
-    public id: number,
-    public username: string,
-    public firstname: string,
-    public lastname: string,
-    public city: string,
-    public state: string,
-    public country: string,
-    public profile: string, // url to the image.
-    public measurementPreference: string,  // feet or metres
-  ) {}
+export default interface AthleteProfile {
+
+    // unique user id
+     id: number;
+
+     // username, usually firstname_lastname
+     username: string;
+
+     // User's first name
+     firstname: string;
+
+     // User's surname
+     lastname: string;
+
+     //  athlete home city/town
+     city: string;
+
+     // athlete's state/province
+     state: string;
+
+     // athlete's country
+     country: string;
+
+     // url to user's profile image, if set.
+     profile: string; 
+
+     // units of measure - feet or meters (metres?)
+     measurementPreference: string;  // feet or metres
 }
