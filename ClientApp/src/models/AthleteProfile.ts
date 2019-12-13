@@ -22,7 +22,7 @@ export default interface AthleteProfile {
      country: string;
 
      // url to user's profile image, if set.
-     profile: string; 
+     profile: string;
 
      // units of measure - feet or meters (metres?)
      measurementPreference: string;  // feet or metres

@@ -3,10 +3,10 @@
     <v-container app>
       <v-layout column align-center>
         <v-card light max-width="500">
-          <v-card-title class="headline" align="top">Are you in the top ten?</v-card-title>
+          <v-card-title class="headline" align="top">How Many top-ten trophies do you have?</v-card-title>
           <v-card-text>Just tap the button below and you'll see how many top ten placings you currently hold on segments you've ridden.</v-card-text>
           <a href="/Strava/Connect">
-            <v-btn height="96px"/>
+            <v-btn large height="96px" depressed />
           </a>
         </v-card>
       </v-layout>
@@ -19,7 +19,9 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  public name = 'Home';
+}
 </script>
 
 <style scoped> 
@@ -29,7 +31,7 @@ background-size: 100%;
 width: 386px;
 height: 96px;
 display: block;
-margin: 20px auto 50px;
+margin: 10px auto 50px;
 border: none;
 }
 </style>

@@ -2,10 +2,10 @@
   <v-footer app dark paddless>
     <v-row no-gutters>
       <v-col>
-        <v-text class="py-2 white--text">
+        <div class="py-2 white--text">
           {{ new Date().getFullYear() }}
           <strong>&copy;&nbsp;zedwerks inc.</strong>
-        </v-text>
+        </div>
       </v-col>
       <v-col>
         <v-spacer/>

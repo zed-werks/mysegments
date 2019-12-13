@@ -1,11 +1,11 @@
 <template>
-  <div-container>
-    <v-expansion-panels popout="true">
-      <v-expansion-panel value="true" v-for="(item, i) in items" :key="i" :to="item.link">
+<v-container>
+    <v-expansion-panels popout>
+      <v-expansion-panel value='true' v-for="(item, i) in items" :key="i" :to="item.link">
         <v-expansion-panel-header>
           <v-row>
-            <v-icon class="mx-4">emoji_events</v-icon>
-            {{item.title}}
+            <v-icon class="mx-4" small>fas fa-trophy</v-icon>
+            <b>{{item.title}}</b>
             <v-spacer />
             <v-spacer />
             Total: {{item.count}}
@@ -16,16 +16,16 @@
       </v-expansion-panel>
     </v-expansion-panels>
     <p>&nbsp;&nbsp;</p>
-  </div-container>
+    </v-container>
+
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
-@Component({
-  components: {},
-})
-export default class DashboardView extends Vue {
+@Component
+export default class Dashboard extends Vue {
+  public name = 'Dashboard';
   private items = [
     { title: '1st Overall', count: '45' },
     { title: '2nd Overall', count: '34' },
