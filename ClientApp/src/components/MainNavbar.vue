@@ -15,7 +15,7 @@
             <v-icon v-html="item.icon"></v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
+            <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -27,11 +27,11 @@
         <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
       </v-btn>
       <v-icon class="mx-4" v-html="icon"></v-icon>
-      <v-toolbar-title class="mr-12 align-center" v-text="title"></v-toolbar-title>
+      <v-toolbar-title class="mr-12 align-center" v-text="title"/>
       <v-spacer></v-spacer>
-        <v-avatar v-if="username" size="36px">
-          <img src="https://graph.facebook.com/689357002/picture" v-bind:alt="username"  />
-        </v-avatar>
+      <v-avatar v-if="username" size="36px">
+        <img src="https://graph.facebook.com/689357002/picture" v-bind:alt="username" />
+      </v-avatar>
     </v-app-bar>
   </div>
 </template>

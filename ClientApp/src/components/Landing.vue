@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{backgroundImage:'url(@/assets/background.jpg)'}"
     <v-card title="Connect">
       <a href="/Strava/Connect">Connect with Strava</a>
     </v-card>
