@@ -13,15 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //-------------------------------------------------------------------------
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -51,7 +49,7 @@ namespace mysegments
             this.logger = logger;
 
         }
-        
+
         /// <summary>
         /// This sets up the OIDC authentication for Hangfire.
         /// </summary>
@@ -60,15 +58,18 @@ namespace mysegments
         {
             services.AddAuthentication(options =>
             {
+
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = StravaDefaults.AuthenticationScheme;
             })
             .AddCookie(options =>
             {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Lax;
                 options.Cookie.Name = "com.mysegments";
-                options.LoginPath = "/Strava/Connect";
-                options.LogoutPath = "/Strava/Disconnect";
+                options.LoginPath = "/login";
+                options.LogoutPath = "/logout";
             })
             .AddStrava(options =>
             {

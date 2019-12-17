@@ -46,27 +46,26 @@ namespace mysegments.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet("/Strava/Connect")]
+        [HttpGet]
         [AllowAnonymous]
-        public IActionResult Connect()
+        public async Task<IActionResult> Connect()
         {
             // Clear the existing external cookie to ensure a clean login process
-            //await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync();
 
             this.logger.LogDebug("Issuing Strava Connect Challenge");
 
-            return Challenge(new AuthenticationProperties { RedirectUri = "Strava/Connected" }, "Strava");
-
-            //return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme, props); 
-            // return new ChallengeResult(StravaAuthDefaults.AuthenticationScheme);
-
+            //return Challenge(new AuthenticationProperties { RedirectUri = "/dashboard" });
+            //return Redirect("/");
+            return new ChallengeResult(StravaDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/dashboard" });
         }
 
         [HttpGet("/Strava/Connected")]
         public IActionResult Connected()
         {
             string textmsg = "Hello " + this.HttpContext.User.Identity.Name;
-            //return Ok(Json(textmsg));
+            this.logger.LogDebug(textmsg);
+
             return Redirect("/dashboard");
         }
 

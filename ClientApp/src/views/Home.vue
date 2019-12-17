@@ -5,11 +5,10 @@
         <v-card light max-width="500">
           <v-card-title class="headline" align="top">How Many top-ten trophies do you have?</v-card-title>
           <v-card-text>Just tap the button below and you'll see how many top ten placings you currently hold on segments you've ridden.</v-card-text>
-            <v-btn to="/Strava/Connect" large height="96px" depressed />
+          <v-btn href="/Strava/Connect" large height="96px" depressed />
         </v-card>
       </v-layout>
     </v-container>
-    <Landing />
   </v-parallax>
 </template>
 
@@ -22,14 +21,15 @@ export default class Home extends Vue {
 }
 </script>
 
-<style scoped> 
+<style scoped>
 .v-btn {
-background: url('../assets/strava/btn_strava_connectwith_orange@2x.png') no-repeat;
-background-size: 100%;
-width: 386px;
-height: 96px;
-display: block;
-margin: 10px auto 50px;
-border: none;
+  background: url("../assets/strava/btn_strava_connectwith_orange@2x.png")
+    no-repeat;
+  background-size: 100%;
+  width: 386px;
+  height: 96px;
+  display: block;
+  margin: 10px auto 50px;
+  border: none;
 }
 </style>
