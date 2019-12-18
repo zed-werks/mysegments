@@ -8,12 +8,11 @@
         </div>
       </v-col>
       <v-col>
-        <v-spacer/>
-        <v-img
-          src="@/assets/strava/api_logo_pwrdBy_strava_horiz_white.png"
-          contain
-          height="30px"
-        />
+          <v-img
+            src="@/assets/strava/api_logo_pwrdBy_strava_horiz_white.png"
+            contain
+            height="30px"
+          />
       </v-col>
     </v-row>
   </v-footer>
