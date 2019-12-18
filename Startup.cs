@@ -67,7 +67,6 @@ namespace mysegments
             {
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = SameSiteMode.Lax;
-                options.Cookie.Name = "com.mysegments";
                 options.LoginPath = "/login";
                 options.LogoutPath = "/logout";
             })
@@ -108,6 +107,15 @@ namespace mysegments
                     }); */
 
             this.ConfigureAuthentication(services);
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential 
+                // cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                // requires using Microsoft.AspNetCore.Http;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
             services.AddHttpContextAccessor();
             services.AddHealthChecks();
@@ -156,12 +164,10 @@ namespace mysegments
             });
 
             // app.UseRequestLocalization();
-            // app.UseCors("CorsPolicy");
+            app.UseCors(CorsPolicy);
 
             app.UseAuthentication();
-            //app.UseStravaAuthentication();
-            //app.UseAuthorization();
-            //app.UseSession();
+            app.UseAuthorization();
 
             if (!env.IsDevelopment())
             {
