@@ -232,3 +232,11 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# ignore appsettings configuration files
+**/appsettings.Staging.json
+**/appsettings.Production.json
+**/appsettings.local.json
+
+# MacOS FileSystem 
+**/.DS_Store
