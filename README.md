@@ -10,11 +10,12 @@ This project is not affiliated with Strava, but simply uses their published APIs
 
 ## Roadmap
 
-## December 2019
+### December 2019
 
  Have basic top ten results showing by rank.. incldding a table that shows how many results per ranking and the abililty to drill down. The results hope to also show how many times you've tied you current highest ranking and the ability to view a history of your rides that remain in the top ten rank for each segment that you current hold a top ten ranking. For example, you may have ridden a segment several times at 3rd overall, but are currently ranked 2nd overall. 
 
-## 2020 and beyond...
+### 2020 and beyond...
+
 In future it would be good to show top ten filtered by age and weight, so no longer 'overall' but by age and/or weight. 
 
 Strava does not currently provide a history view of top 10s - only your KOMs.   And they rank oddly.. in that some bizarre algorithm to arbitratlily miminize the number of ties for ranking. This site will strive to not do that nonsense. Instead, you will be the official holder of lets say 2nd place if you have held that time the longest, but you will still be ranked 2nd overall if you are not the oldest. There will be a special designation for when you hold the oldest tied time for a given ranking. For the KOM, the crown will go to the holder of the fasted time that achieve it first.  The others will be ranked with a no. 1 ranking but not a crown. 
