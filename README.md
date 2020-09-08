@@ -9,7 +9,9 @@ The plan is to ultimately let the user know when they have changes to their rank
 This project is not affiliated with Strava, but simply uses their published APIs and requires that the users of this web applicaiton authenticate with and consent using their Strava login credentials.
 
 ## Roadmap
-###December 2019
+
+## December 2019
+
  Have basic top ten results showing by rank.. incldding a table that shows how many results per ranking and the abililty to drill down. The results hope to also show how many times you've tied you current highest ranking and the ability to view a history of your rides that remain in the top ten rank for each segment that you current hold a top ten ranking. For example, you may have ridden a segment several times at 3rd overall, but are currently ranked 2nd overall. 
 
 ## 2020 and beyond...
